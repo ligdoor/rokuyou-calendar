@@ -1,0 +1,351 @@
+/* ==========================================================
+   暦-KOYOMI- デザイントークン
+   コンセプト：藍色の夜空に浮かぶ、朱と金の暦印（はんこ）
+   ========================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap");
+
+:root {
+  /* ライトモード（生成り和紙） */
+  --bg: #f3ede0;
+  --bg-elevated: #fbf7ee;
+  --surface: #ffffff;
+  --ink: #2a241c;
+  --ink-soft: #6b6152;
+  --line: #ddd2ba;
+  --gold: #b8873a;
+  --vermilion: #bf3f2c;
+  --indigo: #34506b;
+  --green: #4f7256;
+  --shadow: 0 8px 24px rgba(60, 44, 20, 0.12);
+}
+
+[data-theme="dark"] {
+  --bg: #0f131c;
+  --bg-elevated: #161c29;
+  --surface: #1a2131;
+  --ink: #ecе6d6;
+  --ink: #ece6d6;
+  --ink-soft: #9199ac;
+  --line: #2a3548;
+  --gold: #d4a55a;
+  --vermilion: #d9583f;
+  --indigo: #7fa0c2;
+  --green: #7fae86;
+  --shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131c;
+    --bg-elevated: #161c29;
+    --surface: #1a2131;
+    --ink: #ece6d6;
+    --ink-soft: #9199ac;
+    --line: #2a3548;
+    --gold: #d4a55a;
+    --vermilion: #d9583f;
+    --indigo: #7fa0c2;
+    --green: #7fae86;
+    --shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  }
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Zen Kaku Gothic New", -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+  overscroll-behavior-y: none;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mono { font-family: "JetBrains Mono", monospace; }
+
+/* ---------- ヘッダー ---------- */
+.app-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 18px 20px 10px;
+}
+.app-header .logo-mark {
+  font-family: "Shippori Mincho", serif;
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.08em;
+}
+.app-header .logo-sub {
+  font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: 0.12em;
+}
+
+/* ---------- タブ ---------- */
+.tab { display: none; padding: 0 16px 96px; }
+.tab.show { display: block; }
+
+/* ---------- 今日カード ---------- */
+.today-card {
+  background: linear-gradient(165deg, var(--surface), var(--bg-elevated));
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 26px 22px 22px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.today-date { text-align: center; margin-bottom: 6px; }
+.today-weekday { font-size: 12px; letter-spacing: 0.2em; color: var(--ink-soft); }
+.today-daynum {
+  font-family: "Shippori Mincho", serif;
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.today-daynum .slash { color: var(--gold); font-weight: 400; margin: 0 4px; }
+.today-year { font-size: 13px; color: var(--ink-soft); }
+
+/* 六曜はんこ（署名要素） */
+.hanko {
+  width: 84px; height: 84px;
+  margin: 14px auto 18px;
+  border-radius: 50%;
+  border: 3px solid var(--vermilion);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: var(--vermilion);
+  font-family: "Shippori Mincho", serif;
+  transform: rotate(-3deg);
+  box-shadow: 0 0 0 3px var(--bg-elevated) inset;
+}
+.hanko-emoji { font-size: 20px; line-height: 1; }
+.hanko-text { font-size: 15px; font-weight: 700; letter-spacing: 0.05em; margin-top: 2px; }
+.hanko.taian { border-color: var(--gold); color: var(--gold); }
+.hanko.tomobiki { border-color: var(--green); color: var(--green); }
+.hanko.butsumetsu { border-color: var(--ink-soft); color: var(--ink-soft); }
+.hanko.sensho, .hanko.senbu { border-color: var(--indigo); color: var(--indigo); }
+
+.today-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 6px;
+}
+.info-box {
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+}
+.info-label { font-size: 11px; color: var(--ink-soft); margin-bottom: 3px; }
+.info-value { font-size: 15px; font-weight: 600; }
+
+.today-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.tag {
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+}
+.tag-holiday { color: var(--vermilion); border-color: var(--vermilion); }
+.tag-zassetsu { color: var(--green); border-color: var(--green); }
+.tag-none { color: var(--ink-soft); }
+
+.section-label {
+  font-family: "Shippori Mincho", serif;
+  font-size: 15px;
+  margin: 26px 4px 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::after {
+  content: ""; flex: 1; height: 1px; background: var(--line);
+}
+
+/* ---------- カレンダータブ ---------- */
+.month-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 4px 14px;
+}
+.month-nav button {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--surface);
+  color: var(--ink); font-size: 16px;
+}
+#monthLabel {
+  font-family: "Shippori Mincho", serif;
+  font-size: 19px; font-weight: 700;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.weekday { text-align: center; font-size: 11px; color: var(--ink-soft); padding-bottom: 6px; }
+.weekday.sun { color: var(--vermilion); }
+.weekday.sat { color: var(--indigo); }
+
+.cell {
+  aspect-ratio: 1 / 1.05;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 5px 5px 3px;
+  display: flex; flex-direction: column; align-items: center;
+  position: relative;
+}
+.cell.empty { background: transparent; border: none; }
+.cell.today { border: 2px solid var(--gold); }
+.cell.sun .cell-num { color: var(--vermilion); }
+.cell.sat .cell-num { color: var(--indigo); }
+.cell-num { font-size: 14px; font-weight: 600; font-family: "JetBrains Mono", monospace; }
+.cell-rokuyou {
+  font-size: 10px; margin-top: 2px; color: var(--ink-soft);
+  padding: 1px 6px; border-radius: 8px; border: 1px solid var(--line);
+}
+.cell-rokuyou.taian { color: var(--gold); border-color: var(--gold); }
+.cell-rokuyou.tomobiki { color: var(--green); border-color: var(--green); }
+.cell-rokuyou.butsumetsu { color: var(--ink-soft); }
+.cell-rokuyou.sensho, .cell-rokuyou.senbu { color: var(--indigo); border-color: var(--indigo); }
+.cell-dots { display: flex; gap: 3px; margin-top: auto; padding-bottom: 2px; }
+.dot { width: 5px; height: 5px; border-radius: 50%; }
+.dot-holiday { background: var(--vermilion); }
+.dot-zassetsu { background: var(--green); }
+.dot-memo { background: var(--gold); }
+
+.legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 16px; font-size: 12px; color: var(--ink-soft); }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend .dot { display: inline-block; }
+
+/* ---------- 設定タブ ---------- */
+.settings-group {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 6px 16px;
+  margin-bottom: 18px;
+}
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-row .row-label { display: flex; flex-direction: column; }
+.settings-row .row-desc { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+
+.theme-choices { display: flex; gap: 8px; }
+.theme-choices label {
+  border: 1px solid var(--line); border-radius: 10px; padding: 6px 12px; font-size: 12px;
+}
+.theme-choices input { display: none; }
+.theme-choices input:checked + span { color: var(--gold); font-weight: 700; }
+
+input[type="time"] {
+  border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px;
+  background: var(--bg); color: var(--ink); font-family: inherit;
+}
+
+.switch { position: relative; width: 46px; height: 26px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch .slider {
+  position: absolute; inset: 0; background: var(--line); border-radius: 999px; transition: 0.2s;
+}
+.switch .slider::before {
+  content: ""; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px;
+  background: var(--surface); border-radius: 50%; transition: 0.2s;
+}
+.switch input:checked + .slider { background: var(--gold); }
+.switch input:checked + .slider::before { transform: translateX(20px); }
+
+.btn {
+  display: inline-block; border: 1px solid var(--line); background: var(--bg);
+  color: var(--ink); border-radius: 10px; padding: 9px 16px; font-size: 13px;
+  font-family: inherit; cursor: pointer;
+}
+.btn.primary { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+.btn.ghost { background: transparent; }
+.file-label { display: inline-block; }
+
+.about-text { font-size: 12px; color: var(--ink-soft); line-height: 1.8; padding: 4px 4px 20px; }
+
+/* ---------- 下部ナビ ---------- */
+.bottom-nav {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  display: flex;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--line);
+  padding: 8px 10px calc(10px + env(safe-area-inset-bottom));
+  backdrop-filter: blur(10px);
+  z-index: 20;
+}
+.navbtn {
+  flex: 1; background: none; border: none; color: var(--ink-soft);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-size: 11px; font-family: inherit; padding: 4px 0;
+}
+.navbtn .navicon { font-size: 20px; }
+.navbtn.active { color: var(--gold); }
+
+/* ---------- 日付詳細シート ---------- */
+.overlay {
+  position: fixed; inset: 0; background: rgba(10, 10, 10, 0.5);
+  opacity: 0; pointer-events: none; transition: 0.25s; z-index: 30;
+}
+.overlay.open { opacity: 1; pointer-events: auto; }
+
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: var(--bg-elevated);
+  border-radius: 22px 22px 0 0;
+  padding: 18px 20px calc(24px + env(safe-area-inset-bottom));
+  transform: translateY(105%);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: 31;
+  max-height: 82vh; overflow-y: auto;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.25);
+}
+.sheet.open { transform: translateY(0); }
+.sheet-handle { width: 40px; height: 4px; background: var(--line); border-radius: 4px; margin: 0 auto 14px; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+#sheetTitle { font-family: "Shippori Mincho", serif; font-size: 17px; font-weight: 700; }
+#closeSheet { background: none; border: none; font-size: 20px; color: var(--ink-soft); }
+
+.sheet-hanko {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 2px solid var(--vermilion); color: var(--vermilion);
+  border-radius: 999px; padding: 6px 16px; font-family: "Shippori Mincho", serif;
+  font-weight: 700; margin-bottom: 14px;
+}
+.sheet-hanko.taian { border-color: var(--gold); color: var(--gold); }
+.sheet-hanko.tomobiki { border-color: var(--green); color: var(--green); }
+.sheet-hanko.butsumetsu { border-color: var(--ink-soft); color: var(--ink-soft); }
+.sheet-hanko.sensho, .sheet-hanko.senbu { border-color: var(--indigo); color: var(--indigo); }
+
+.sheet-grid { display: grid; gap: 8px; font-size: 13px; color: var(--ink); margin-bottom: 18px; }
+
+.memo-label { font-size: 12px; color: var(--ink-soft); margin-bottom: 6px; }
+#memoInput {
+  width: 100%; min-height: 84px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); padding: 10px 12px; font-family: inherit;
+  font-size: 14px; resize: vertical;
+}
+.sheet-actions { display: flex; gap: 10px; margin-top: 14px; }
+
+/* ---------- トースト ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%) translateY(20px);
+  background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 999px;
+  font-size: 13px; opacity: 0; pointer-events: none; transition: 0.25s; z-index: 40;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (min-width: 560px) {
+  body { max-width: 480px; margin: 0 auto; }
+}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<title>暦 -KOYOMI- 六曜カレンダー</title>
+<meta name="description" content="六曜・干支・祝日・二十四節気・月齢・雑節がわかる和暦カレンダー" />
+
+<!-- PWA -->
+<link rel="manifest" href="./manifest.json" />
+<meta name="theme-color" content="#0f131c" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="暦" />
+<link rel="apple-touch-icon" href="./icons/icon-192.png" />
+
+<link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <span class="logo-mark">暦</span>
+  <span class="logo-sub">KOYOMI CALENDAR</span>
+</header>
+
+<!-- 今日タブ -->
+<main class="tab show" id="tab-today">
+  <div class="today-card" id="todayCard"></div>
+  <div class="section-label">これからの目安</div>
+  <div class="about-text">
+    タブの「カレンダー」から月の一覧を見たり、日付をタップしてメモを残したりできます。
+  </div>
+</main>
+
+<!-- カレンダータブ -->
+<main class="tab" id="tab-calendar">
+  <div class="month-nav">
+    <button id="prevMonth">‹</button>
+    <span id="monthLabel"></span>
+    <button id="nextMonth">›</button>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+  <div class="legend">
+    <span><span class="dot dot-holiday"></span> 祝日</span>
+    <span><span class="dot dot-zassetsu"></span> 雑節</span>
+    <span><span class="dot dot-memo"></span> メモあり</span>
+  </div>
+</main>
+
+<!-- 設定タブ -->
+<main class="tab" id="tab-settings">
+  <div class="section-label">表示</div>
+  <div class="settings-group">
+    <div class="settings-row">
+      <div class="row-label">
+        <span>🎨 テーマ</span>
+        <span class="row-desc">自動は端末の設定に合わせます</span>
+      </div>
+      <div class="theme-choices">
+        <label><input type="radio" name="theme" value="auto" /><span>自動</span></label>
+        <label><input type="radio" name="theme" value="light" /><span>ライト</span></label>
+        <label><input type="radio" name="theme" value="dark" /><span>ダーク</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">通知</div>
+  <div class="settings-group">
+    <div class="settings-row">
+      <div class="row-label">
+        <span>🔔 毎日の通知</span>
+        <span class="row-desc">アプリを開いている間、指定時刻にお知らせします</span>
+      </div>
+      <label class="switch"><input type="checkbox" id="notifyToggle" /><span class="slider"></span></label>
+    </div>
+    <div class="settings-row">
+      <div class="row-label"><span>通知する時刻</span></div>
+      <input type="time" id="notifyTime" />
+    </div>
+  </div>
+  <div class="about-text">
+    ⚠️ iPhoneのSafariでは、ホーム画面に追加したアプリを完全に閉じている間は通知が届きません。
+    確実に通知したい日は、日付詳細の「カレンダーに書き出す」から標準の「カレンダー」アプリに登録すると、
+    iPhone本体の通知でお知らせできます。
+  </div>
+
+  <div class="section-label">バックアップ</div>
+  <div class="settings-group">
+    <div class="settings-row">
+      <div class="row-label">
+        <span>☁️ データの書き出し</span>
+        <span class="row-desc">メモ・設定をファイルに保存します</span>
+      </div>
+      <button class="btn primary" id="exportBtn">書き出す</button>
+    </div>
+    <div class="settings-row">
+      <div class="row-label">
+        <span>📥 データの読み込み</span>
+        <span class="row-desc">書き出したファイルから復元します</span>
+      </div>
+      <label class="btn file-label">
+        選ぶ<input type="file" id="importInput" accept="application/json" style="display:none" />
+      </label>
+    </div>
+  </div>
+  <div class="about-text">
+    書き出したファイルは「ファイル」アプリでiCloud Driveに保存しておくと、機種変更時や別端末でも
+    「読み込み」から同じメモを復元できます（自動同期ではなく、手動でのバックアップです）。
+  </div>
+
+  <div class="section-label">このアプリについて</div>
+  <div class="about-text">
+    六曜・旧暦・二十四節気・月齢は天文計算による自動算出のため、まれに暦の専門書と1日ずれる場合があります。
+    祝日は法律で定められた計算式に基づいていますが、特例による移動には対応していません。<br /><br />
+    Version 1.0
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <button class="navbtn active" data-tab="today"><span class="navicon">☀️</span>今日</button>
+  <button class="navbtn" data-tab="calendar"><span class="navicon">📅</span>カレンダー</button>
+  <button class="navbtn" data-tab="settings"><span class="navicon">⚙️</span>設定</button>
+</nav>
+
+<!-- 日付詳細シート -->
+<div class="overlay" id="sheetOverlay"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <span id="sheetTitle"></span>
+    <button id="closeSheet">✕</button>
+  </div>
+  <div id="sheetBody"></div>
+  <div class="memo-label">📌 メモ</div>
+  <textarea id="memoInput" placeholder="この日の予定やメモを書けます"></textarea>
+  <div class="sheet-actions">
+    <button class="btn primary" id="saveMemoBtn">メモを保存</button>
+    <button class="btn ghost" id="icsBtn">カレンダーに書き出す</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="./js/astro.js"></script>
+<script src="./js/lunar.js"></script>
+<script src="./js/kanshi.js"></script>
+<script src="./js/zassetsu.js"></script>
+<script src="./js/holidays.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>
