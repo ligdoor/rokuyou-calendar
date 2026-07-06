@@ -164,17 +164,57 @@ const App = {
     });
     document.getElementById("prevMonth").addEventListener("click", () => {
       this.state.viewDate = new Date(this.state.viewDate.getFullYear(), this.state.viewDate.getMonth() - 1, 1);
-      this.renderCalendar();
+      this.renderCalendar("right");
     });
     document.getElementById("nextMonth").addEventListener("click", () => {
       this.state.viewDate = new Date(this.state.viewDate.getFullYear(), this.state.viewDate.getMonth() + 1, 1);
-      this.renderCalendar();
+      this.renderCalendar("left");
     });
     document.getElementById("closeSheet").addEventListener("click", () => this.closeSheet());
     document.getElementById("sheetOverlay").addEventListener("click", () => this.closeSheet());
     document.getElementById("saveMemoBtn").addEventListener("click", () => this.saveMemo());
     document.getElementById("icsBtn").addEventListener("click", () => this.exportDayICS());
     this.bindSheetGestures();
+    this.bindCalendarSwipe();
+  },
+
+  // ---- カレンダーを左右にスワイプして月を変える ----
+  bindCalendarSwipe() {
+    const grid = document.getElementById("calGrid");
+    let startX = 0, startY = 0, tracking = false, horizontal = false;
+    const THRESHOLD = 45;
+
+    grid.addEventListener("touchstart", (e) => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      tracking = true;
+      horizontal = false;
+    }, { passive: true });
+
+    grid.addEventListener("touchmove", (e) => {
+      if (!tracking) return;
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        horizontal = true;
+        e.preventDefault(); // 横スワイプ中はページが縦に動かないようにする
+      }
+    }, { passive: false });
+
+    grid.addEventListener("touchend", (e) => {
+      if (!tracking) return;
+      tracking = false;
+      if (!horizontal) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      if (dx <= -THRESHOLD) {
+        this.state.viewDate = new Date(this.state.viewDate.getFullYear(), this.state.viewDate.getMonth() + 1, 1);
+        this.renderCalendar("left");
+      } else if (dx >= THRESHOLD) {
+        this.state.viewDate = new Date(this.state.viewDate.getFullYear(), this.state.viewDate.getMonth() - 1, 1);
+        this.renderCalendar("right");
+      }
+    });
   },
 
   // ---- シートを下にスワイプして閉じる ----
@@ -296,7 +336,7 @@ const App = {
   },
 
   // ---- カレンダータブ ----
-  renderCalendar() {
+  renderCalendar(direction) {
     const vd = this.state.viewDate;
     const year = vd.getFullYear(), month = vd.getMonth();
     document.getElementById("monthLabel").textContent = `${year}年 ${month + 1}月`;
@@ -348,6 +388,12 @@ const App = {
       `;
       cell.addEventListener("click", () => this.openSheet(date));
       grid.appendChild(cell);
+    }
+
+    if (direction) {
+      grid.classList.remove("slide-left", "slide-right");
+      void grid.offsetWidth; // アニメーションを最初からやり直すためのおまじない
+      grid.classList.add(direction === "left" ? "slide-left" : "slide-right");
     }
   },
 

@@ -204,7 +204,12 @@ rt {
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 4px;
   width: 100%;
+  touch-action: pan-y;
 }
+@keyframes slideFromRight { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideFromLeft { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: translateX(0); } }
+.cal-grid.slide-left { animation: slideFromRight 0.22s ease; }
+.cal-grid.slide-right { animation: slideFromLeft 0.22s ease; }
 .weekday { text-align: center; font-size: 11px; color: var(--ink-soft); padding-bottom: 6px; min-width: 0; }
 .weekday.sun { color: var(--vermilion); }
 .weekday.sat { color: var(--indigo); }
