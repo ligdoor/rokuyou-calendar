@@ -4,18 +4,18 @@
  * 更新がすぐ反映されるよう、通信できるときは常に最新のファイルを取りに行き、
  * 電波が無いときだけキャッシュ（保存しておいたもの）を使う方式にしています。
  */
-const CACHE_NAME = "koyomi-cache-v3";
+const CACHE_NAME = "koyomi-cache-v4";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./css/style.css",
-  "./js/astro.js",
-  "./js/lunar.js",
-  "./js/kanshi.js",
-  "./js/zassetsu.js",
-  "./js/holidays.js",
-  "./js/app.js",
+  "./css/style.css?v=4",
+  "./js/astro.js?v=4",
+  "./js/lunar.js?v=4",
+  "./js/kanshi.js?v=4",
+  "./js/zassetsu.js?v=4",
+  "./js/holidays.js?v=4",
+  "./js/app.js?v=4",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
 ];
@@ -39,7 +39,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: "no-store" })
       .then((networkRes) => {
         const clone = networkRes.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
