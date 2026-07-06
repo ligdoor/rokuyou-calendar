@@ -98,7 +98,11 @@ rt {
 
 /* ---------- タブ ---------- */
 .tab { display: none; padding: 0 16px 96px; }
-.tab.show { display: block; }
+.tab.show { display: block; animation: tabFadeIn 0.25s ease; }
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 /* ---------- 今日カード ---------- */
 .today-card {
@@ -184,10 +188,12 @@ rt {
   padding: 6px 4px 14px;
 }
 .month-nav button {
-  width: 38px; height: 38px; border-radius: 50%;
+  width: 42px; height: 42px; border-radius: 50%;
   border: 1px solid var(--line); background: var(--surface);
-  color: var(--ink); font-size: 16px;
+  color: var(--ink); font-size: 16px; cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
+.month-nav button:active { transform: scale(0.9); }
 #monthLabel {
   font-family: "Shippori Mincho", serif;
   font-size: 19px; font-weight: 700;
@@ -212,7 +218,10 @@ rt {
   padding: 4px 2px 6px;
   display: flex; flex-direction: column; align-items: center;
   position: relative;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
+.cell:active { transform: scale(0.94); }
 .cell.empty { background: transparent; border: none; }
 .cell.today { border: 2px solid var(--gold); }
 .cell.sun .cell-num { color: var(--vermilion); }
@@ -311,7 +320,9 @@ input[type="time"] {
   display: inline-block; border: 1px solid var(--line); background: var(--bg);
   color: var(--ink); border-radius: 10px; padding: 9px 16px; font-size: 13px;
   font-family: inherit; cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
 }
+.btn:active { transform: scale(0.96); }
 .btn.primary { background: var(--indigo); border-color: var(--indigo); color: #fff; }
 .btn.ghost { background: transparent; }
 .file-label { display: inline-block; }
@@ -332,7 +343,9 @@ input[type="time"] {
   flex: 1; background: none; border: none; color: var(--ink-soft);
   display: flex; flex-direction: column; align-items: center; gap: 3px;
   font-size: 11px; font-family: inherit; padding: 4px 0;
+  cursor: pointer; transition: transform 0.12s ease, color 0.15s ease;
 }
+.navbtn:active { transform: scale(0.92); }
 .navbtn .navicon { font-size: 20px; }
 .navbtn.active { color: var(--gold); }
 
@@ -354,7 +367,7 @@ input[type="time"] {
   max-height: 82vh; overflow-y: auto;
   box-shadow: 0 -10px 30px rgba(0,0,0,0.25);
 }
-.sheet.open { transform: translateY(0); }
+.sheet.open { transform: translateY(var(--drag-y, 0px)); }
 .sheet-handle { width: 40px; height: 4px; background: var(--line); border-radius: 4px; margin: 0 auto 14px; touch-action: none; cursor: grab; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; touch-action: none; }
 #sheetTitle { font-family: "Shippori Mincho", serif; font-size: 17px; font-weight: 700; }
@@ -389,6 +402,84 @@ input[type="time"] {
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ---------- PC等マウス操作時のホバー効果 ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .cell:hover { border-color: var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .btn:hover { opacity: 0.85; }
+  .navbtn:hover { color: var(--gold); }
+  .month-nav button:hover { background: var(--bg-elevated); border-color: var(--gold); }
+  .theme-choices label:hover { border-color: var(--gold); }
+}
+
 @media (min-width: 560px) {
   body { max-width: 480px; margin: 0 auto; }
+}
+
+/* ---------- PCなど広い画面向けレイアウト ---------- */
+@media (min-width: 900px) {
+  body {
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+    min-height: 100vh;
+  }
+  .app-header { padding: 28px 32px 14px; order: -2; }
+  .app-header .logo-mark { font-size: 32px; }
+  .app-header .logo-sub { font-size: 13px; }
+
+  /* 下部固定タブを、上部のタブバーに変更 */
+  .bottom-nav {
+    order: -1;
+    position: static;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 24px 18px;
+    background: transparent;
+    border-top: none;
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: none;
+  }
+  .navbtn {
+    flex: none;
+    flex-direction: row;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+  }
+  .navbtn.active { background: var(--surface); box-shadow: var(--shadow); }
+  .navbtn .navicon { font-size: 16px; }
+
+  .tab { order: 1; padding: 10px 32px 40px; }
+
+  .today-card { padding: 40px 44px 36px; }
+  .today-daynum { font-size: 74px; }
+  .hanko { width: 108px; height: 108px; }
+  .hanko-emoji { font-size: 26px; }
+  .hanko-text { font-size: 18px; }
+  .today-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .info-box { padding: 14px 16px; }
+  .info-label { font-size: 12px; }
+  .info-value { font-size: 17px; }
+
+  .cal-grid { gap: 8px; }
+  .cell { aspect-ratio: 1 / 1.05; padding: 8px 4px 8px; }
+  .cell-num { font-size: 16px; }
+  .cell-rokuyou { font-size: 12px; padding: 3px 7px; }
+  .cell-kanshi { font-size: 12px; }
+  #monthLabel { font-size: 23px; }
+
+  .settings-group { padding: 8px 24px; }
+  .about-text { font-size: 13px; padding: 4px 4px 24px; }
+
+  .sheet {
+    position: fixed; left: 50%; bottom: 40px;
+    transform: translate(-50%, 30px);
+    width: 480px; border-radius: 22px;
+    opacity: 0; pointer-events: none;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+  .sheet.open { transform: translate(-50%, var(--drag-y, 0px)); opacity: 1; pointer-events: auto; }
+  .sheet-handle { display: none; }
 }

@@ -194,14 +194,14 @@ const App = {
       if (!dragging) return;
       currentY = y;
       const delta = Math.max(0, currentY - startY);
-      sheet.style.transform = `translateY(${delta}px)`;
+      sheet.style.setProperty("--drag-y", `${delta}px`);
     };
     const onEnd = () => {
       if (!dragging) return;
       dragging = false;
       sheet.style.transition = "";
       const delta = currentY - startY;
-      sheet.style.transform = "";
+      sheet.style.removeProperty("--drag-y");
       if (delta > 80) this.closeSheet();
     };
 
