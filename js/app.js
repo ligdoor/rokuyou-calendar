@@ -178,11 +178,30 @@ const App = {
     this.bindCalendarSwipe();
   },
 
-  // ---- カレンダーを左右にスワイプして月を変える ----
+  // ---- カレンダーを左右にスワイプして月を変える（指の動きに合わせて追従）----
   bindCalendarSwipe() {
     const grid = document.getElementById("calGrid");
-    let startX = 0, startY = 0, tracking = false, horizontal = false;
-    const THRESHOLD = 45;
+    let startX = 0, startY = 0, tracking = false, horizontal = false, currentDx = 0;
+    const THRESHOLD = 55;
+    const SNAP_MS = 220;
+
+    const goToMonth = (offset, exitDx) => {
+      // 今表示しているマスを画面の外まで追い出す
+      grid.style.transition = `transform ${SNAP_MS}ms ease`;
+      grid.style.transform = `translateX(${exitDx}px)`;
+      const enterFrom = exitDx < 0 ? 36 : -36; // 追い出した向きの反対側から出てくる
+      setTimeout(() => {
+        this.state.viewDate = new Date(this.state.viewDate.getFullYear(), this.state.viewDate.getMonth() + offset, 1);
+        grid.style.transition = "none";
+        grid.style.transform = `translateX(${enterFrom}px)`;
+        this.renderCalendar();
+        // 次のフレームで中央へアニメーション
+        requestAnimationFrame(() => {
+          grid.style.transition = `transform ${SNAP_MS}ms ease`;
+          grid.style.transform = "translateX(0)";
+        });
+      }, SNAP_MS);
+    };
 
     grid.addEventListener("touchstart", (e) => {
       if (e.touches.length !== 1) return;
@@ -190,30 +209,38 @@ const App = {
       startY = e.touches[0].clientY;
       tracking = true;
       horizontal = false;
+      grid.style.transition = "none";
     }, { passive: true });
 
     grid.addEventListener("touchmove", (e) => {
-      if (!tracking) return;
+      if (!tracking || e.touches.length !== 1) return;
       const dx = e.touches[0].clientX - startX;
       const dy = e.touches[0].clientY - startY;
-      if (Math.abs(dx) > Math.abs(dy)) {
+      if (!horizontal && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) {
         horizontal = true;
-        e.preventDefault(); // 横スワイプ中はページが縦に動かないようにする
+      }
+      if (horizontal) {
+        e.preventDefault(); // 横に動かしている間はページが縦に動かないように
+        currentDx = dx;
+        grid.style.transform = `translateX(${dx}px)`;
       }
     }, { passive: false });
 
-    grid.addEventListener("touchend", (e) => {
+    grid.addEventListener("touchend", () => {
       if (!tracking) return;
       tracking = false;
       if (!horizontal) return;
-      const dx = e.changedTouches[0].clientX - startX;
-      if (dx <= -THRESHOLD) {
-        this.state.viewDate = new Date(this.state.viewDate.getFullYear(), this.state.viewDate.getMonth() + 1, 1);
-        this.renderCalendar("left");
-      } else if (dx >= THRESHOLD) {
-        this.state.viewDate = new Date(this.state.viewDate.getFullYear(), this.state.viewDate.getMonth() - 1, 1);
-        this.renderCalendar("right");
+
+      if (currentDx <= -THRESHOLD) {
+        goToMonth(1, -window.innerWidth); // 次の月：左へ追い出す
+      } else if (currentDx >= THRESHOLD) {
+        goToMonth(-1, window.innerWidth); // 前の月：右へ追い出す
+      } else {
+        // しきい値まで届かなかったら元の位置に戻す
+        grid.style.transition = `transform ${SNAP_MS}ms ease`;
+        grid.style.transform = "translateX(0)";
       }
+      currentDx = 0;
     });
   },
 
