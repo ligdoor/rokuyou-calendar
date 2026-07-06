@@ -1,8 +1,10 @@
 /**
  * sw.js
  * オフラインでもアプリを開けるように、必要なファイルを端末にキャッシュします。
+ * 更新がすぐ反映されるよう、通信できるときは常に最新のファイルを取りに行き、
+ * 電波が無いときだけキャッシュ（保存しておいたもの）を使う方式にしています。
  */
-const CACHE_NAME = "koyomi-cache-v1";
+const CACHE_NAME = "koyomi-cache-v3";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
@@ -37,14 +39,12 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const fetchPromise = fetch(event.request)
-        .then((networkRes) => {
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkRes.clone()));
-          return networkRes;
-        })
-        .catch(() => cached);
-      return cached || fetchPromise;
-    })
+    fetch(event.request)
+      .then((networkRes) => {
+        const clone = networkRes.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        return networkRes;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

@@ -218,6 +218,14 @@ rt {
 .cell.sun .cell-num { color: var(--vermilion); }
 .cell.sat .cell-num { color: var(--indigo); }
 .cell.holiday .cell-num { color: var(--vermilion); font-weight: 700; }
+.cell.tori { background: rgba(184, 135, 58, 0.16); background: color-mix(in srgb, var(--gold) 20%, var(--surface)); }
+.cell.tomobiki-day { background: rgba(79, 114, 86, 0.16); background: color-mix(in srgb, var(--green) 20%, var(--surface)); }
+.cell.tori.tomobiki-day {
+  background: linear-gradient(135deg, rgba(184,135,58,0.18) 50%, rgba(79,114,86,0.18) 50%);
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--gold) 22%, var(--surface)) 50%,
+    color-mix(in srgb, var(--green) 22%, var(--surface)) 50%);
+}
 
 .cell-top {
   width: 100%;
@@ -250,6 +258,12 @@ rt {
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .legend .dot { display: inline-block; }
 .legend-holiday { color: var(--vermilion); }
+.legend-swatch {
+  display: inline-block; width: 12px; height: 12px; border-radius: 4px;
+  border: 1px solid var(--line);
+}
+.swatch-tori { background: color-mix(in srgb, var(--gold) 30%, var(--surface)); }
+.swatch-tomobiki { background: color-mix(in srgb, var(--green) 30%, var(--surface)); }
 
 /* ---------- 設定タブ ---------- */
 .settings-group {

@@ -335,7 +335,9 @@ const App = {
         "cell" +
         (isToday ? " today" : "") +
         (dow === 0 ? " sun" : dow === 6 ? " sat" : "") +
-        (info.holiday ? " holiday" : "");
+        (info.holiday ? " holiday" : "") +
+        (info.dayKanshi.junishi === "酉" ? " tori" : "") +
+        (info.rokuyou === "友引" ? " tomobiki-day" : "");
       cell.innerHTML = `
         <div class="cell-top">
           <div class="cell-num">${dayNum}</div>
