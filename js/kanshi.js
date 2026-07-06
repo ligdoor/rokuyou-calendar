@@ -6,6 +6,9 @@ const Kanshi = (() => {
   const JIKKAN = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
   const JUNISHI = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
   const JUNISHI_EMOJI = ["🐭", "🐂", "🐯", "🐰", "🐲", "🐍", "🐴", "🐐", "🐵", "🐔", "🐶", "🐗"];
+  // ふりがな用の読み（十干＋十二支をそのままつなげると伝統的な読み方になります）
+  const JIKKAN_YOMI = ["きのえ", "きのと", "ひのえ", "ひのと", "つちのえ", "つちのと", "かのえ", "かのと", "みずのえ", "みずのと"];
+  const JUNISHI_YOMI = ["ね", "うし", "とら", "う", "たつ", "み", "うま", "ひつじ", "さる", "とり", "いぬ", "い"];
 
   // 年の干支（1984年 = 甲子(きのえね) を基準に計算）
   function yearKanshi(year) {
@@ -14,6 +17,7 @@ const Kanshi = (() => {
       jikkan: JIKKAN[idx % 10],
       junishi: JUNISHI[idx % 12],
       name: JIKKAN[idx % 10] + JUNISHI[idx % 12],
+      yomi: JIKKAN_YOMI[idx % 10] + JUNISHI_YOMI[idx % 12],
       emoji: JUNISHI_EMOJI[idx % 12],
     };
   }
@@ -26,6 +30,7 @@ const Kanshi = (() => {
       jikkan: JIKKAN[idx % 10],
       junishi: JUNISHI[idx % 12],
       name: JIKKAN[idx % 10] + JUNISHI[idx % 12],
+      yomi: JIKKAN_YOMI[idx % 10] + JUNISHI_YOMI[idx % 12],
       emoji: JUNISHI_EMOJI[idx % 12],
     };
   }

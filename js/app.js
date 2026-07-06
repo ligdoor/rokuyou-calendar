@@ -195,8 +195,8 @@ const App = {
         <span class="hanko-text">${info.rokuyou || "-"}</span>
       </div>
       <div class="today-grid">
-        <div class="info-box"><div class="info-label">🐍 日の干支</div><div class="info-value">${info.dayKanshi.emoji} ${info.dayKanshi.name}</div></div>
-        <div class="info-box"><div class="info-label">🐲 年の干支</div><div class="info-value">${info.yearKanshi.emoji} ${info.yearKanshi.name}</div></div>
+        <div class="info-box"><div class="info-label">🐍 日の干支</div><div class="info-value">${info.dayKanshi.emoji} <ruby>${info.dayKanshi.name}<rt>${info.dayKanshi.yomi}</rt></ruby></div></div>
+        <div class="info-box"><div class="info-label">🐲 年の干支</div><div class="info-value">${info.yearKanshi.emoji} <ruby>${info.yearKanshi.name}<rt>${info.yearKanshi.yomi}</rt></ruby></div></div>
         <div class="info-box"><div class="info-label">🌑 月齢</div><div class="info-value">${info.moonIcon} ${info.moonAge.toFixed(1)}</div></div>
         <div class="info-box"><div class="info-label">🌕 二十四節気</div><div class="info-value">${info.season || "-"}</div></div>
         ${info.lunar ? `<div class="info-box"><div class="info-label">📜 旧暦</div><div class="info-value">${info.lunar.isLeap ? "閏" : ""}${info.lunar.month}月${info.lunar.day}日</div></div>` : ""}
@@ -241,15 +241,18 @@ const App = {
       const dow = date.getDay();
       const hasMemo = !!this.state.memos[keyOfDate(date)];
 
-      cell.className = "cell" + (isToday ? " today" : "") + (dow === 0 ? " sun" : dow === 6 ? " sat" : "");
+      cell.className =
+        "cell" +
+        (isToday ? " today" : "") +
+        (dow === 0 ? " sun" : dow === 6 ? " sat" : "") +
+        (info.holiday ? " holiday" : "");
       cell.innerHTML = `
-        <div class="cell-num">${dayNum}</div>
-        <div class="cell-rokuyou ${style.cls || ""}">${info.rokuyou ? info.rokuyou[0] : ""}</div>
-        <div class="cell-dots">
-          ${info.holiday ? '<span class="dot dot-holiday"></span>' : ""}
-          ${info.zassetsu.length ? '<span class="dot dot-zassetsu"></span>' : ""}
+        <div class="cell-top">
+          <div class="cell-num">${dayNum}</div>
           ${hasMemo ? '<span class="dot dot-memo"></span>' : ""}
         </div>
+        <div class="cell-rokuyou ${style.cls || ""}">${info.rokuyou || ""}</div>
+        <div class="cell-kanshi">${info.dayKanshi.name}</div>
       `;
       cell.addEventListener("click", () => this.openSheet(date));
       grid.appendChild(cell);
@@ -266,8 +269,8 @@ const App = {
     document.getElementById("sheetBody").innerHTML = `
       <div class="sheet-hanko ${style.cls || ""}">${style.emoji || ""} ${info.rokuyou || "-"}</div>
       <div class="sheet-grid">
-        <div>🐍 日の干支：${info.dayKanshi.name}</div>
-        <div>🐲 年の干支：${info.yearKanshi.name}</div>
+        <div>🐍 日の干支：<ruby>${info.dayKanshi.name}<rt>${info.dayKanshi.yomi}</rt></ruby></div>
+        <div>🐲 年の干支：<ruby>${info.yearKanshi.name}<rt>${info.yearKanshi.yomi}</rt></ruby></div>
         <div>🌑 月齢：${info.moonAge.toFixed(1)}（${info.moonIcon}）</div>
         <div>🌕 節気：${info.season || "-"}</div>
         ${info.lunar ? `<div>📜 旧暦：${info.lunar.isLeap ? "閏" : ""}${info.lunar.month}月${info.lunar.day}日</div>` : ""}

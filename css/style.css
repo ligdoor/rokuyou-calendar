@@ -65,6 +65,15 @@ body {
 
 .mono { font-family: "JetBrains Mono", monospace; }
 
+ruby { ruby-align: center; }
+rt {
+  font-size: 0.55em;
+  color: var(--ink-soft);
+  font-family: "Zen Kaku Gothic New", sans-serif;
+  font-weight: 400;
+  user-select: none;
+}
+
 /* ---------- ヘッダー ---------- */
 .app-header {
   display: flex;
@@ -191,11 +200,11 @@ body {
 .weekday.sat { color: var(--indigo); }
 
 .cell {
-  aspect-ratio: 1 / 1.05;
+  aspect-ratio: 1 / 1.15;
   border-radius: 12px;
   background: var(--surface);
   border: 1px solid var(--line);
-  padding: 5px 5px 3px;
+  padding: 4px 3px 5px;
   display: flex; flex-direction: column; align-items: center;
   position: relative;
 }
@@ -203,24 +212,37 @@ body {
 .cell.today { border: 2px solid var(--gold); }
 .cell.sun .cell-num { color: var(--vermilion); }
 .cell.sat .cell-num { color: var(--indigo); }
-.cell-num { font-size: 14px; font-weight: 600; font-family: "JetBrains Mono", monospace; }
+.cell.holiday .cell-num { color: var(--vermilion); font-weight: 700; }
+
+.cell-top {
+  width: 100%;
+  display: flex; align-items: flex-start; justify-content: center;
+  position: relative;
+}
+.cell-num { font-size: 13px; font-weight: 600; font-family: "JetBrains Mono", monospace; }
+.cell-top .dot-memo {
+  position: absolute; top: 0; right: 4px;
+}
 .cell-rokuyou {
-  font-size: 10px; margin-top: 2px; color: var(--ink-soft);
-  padding: 1px 6px; border-radius: 8px; border: 1px solid var(--line);
+  font-size: 9px; margin-top: 3px; color: var(--ink-soft);
+  padding: 1px 5px; border-radius: 7px; border: 1px solid var(--line);
+  line-height: 1.5; white-space: nowrap;
 }
 .cell-rokuyou.taian { color: var(--gold); border-color: var(--gold); }
 .cell-rokuyou.tomobiki { color: var(--green); border-color: var(--green); }
 .cell-rokuyou.butsumetsu { color: var(--ink-soft); }
 .cell-rokuyou.sensho, .cell-rokuyou.senbu { color: var(--indigo); border-color: var(--indigo); }
-.cell-dots { display: flex; gap: 3px; margin-top: auto; padding-bottom: 2px; }
+.cell-kanshi {
+  font-size: 9px; color: var(--ink-soft); margin-top: 3px;
+  font-family: "Shippori Mincho", serif; letter-spacing: 0.02em;
+}
 .dot { width: 5px; height: 5px; border-radius: 50%; }
-.dot-holiday { background: var(--vermilion); }
-.dot-zassetsu { background: var(--green); }
 .dot-memo { background: var(--gold); }
 
 .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 16px; font-size: 12px; color: var(--ink-soft); }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .legend .dot { display: inline-block; }
+.legend-holiday { color: var(--vermilion); }
 
 /* ---------- 設定タブ ---------- */
 .settings-group {
