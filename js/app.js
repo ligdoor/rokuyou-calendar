@@ -207,7 +207,7 @@ const App = {
 
     [dragHandle, header].forEach((el) => {
       el.addEventListener("touchstart", (e) => onStart(e.touches[0].clientY), { passive: true });
-      el.addEventListener("touchmove", (e) => onMove(e.touches[0].clientY), { passive: true });
+      el.addEventListener("touchmove", (e) => { e.preventDefault(); onMove(e.touches[0].clientY); }, { passive: false });
       el.addEventListener("touchend", onEnd);
       // PCのマウス操作でも確認できるように
       el.addEventListener("mousedown", (e) => onStart(e.clientY));
@@ -371,10 +371,12 @@ const App = {
     document.getElementById("memoInput").value = this.state.memos[keyOfDate(date)] || "";
     document.getElementById("sheet").classList.add("open");
     document.getElementById("sheetOverlay").classList.add("open");
+    document.body.classList.add("no-scroll");
   },
   closeSheet() {
     document.getElementById("sheet").classList.remove("open");
     document.getElementById("sheetOverlay").classList.remove("open");
+    document.body.classList.remove("no-scroll");
     this.renderCalendar();
   },
   saveMemo() {

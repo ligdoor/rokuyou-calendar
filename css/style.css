@@ -51,7 +51,7 @@
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; }
+html, body { height: 100%; overflow-x: hidden; }
 body {
   margin: 0;
   background: var(--bg);
@@ -61,7 +61,10 @@ body {
   overscroll-behavior-y: none;
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
+  width: 100%;
+  overflow-x: hidden;
 }
+body.no-scroll { overflow: hidden; height: 100%; position: fixed; inset: 0; }
 
 .mono { font-family: "JetBrains Mono", monospace; }
 
@@ -192,19 +195,22 @@ rt {
 
 .cal-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  width: 100%;
 }
-.weekday { text-align: center; font-size: 11px; color: var(--ink-soft); padding-bottom: 6px; }
+.weekday { text-align: center; font-size: 11px; color: var(--ink-soft); padding-bottom: 6px; min-width: 0; }
 .weekday.sun { color: var(--vermilion); }
 .weekday.sat { color: var(--indigo); }
 
 .cell {
   aspect-ratio: 1 / 1.15;
+  min-width: 0;
+  overflow: hidden;
   border-radius: 12px;
   background: var(--surface);
   border: 1px solid var(--line);
-  padding: 4px 3px 5px;
+  padding: 4px 2px 5px;
   display: flex; flex-direction: column; align-items: center;
   position: relative;
 }
@@ -221,12 +227,13 @@ rt {
 }
 .cell-num { font-size: 13px; font-weight: 600; font-family: "JetBrains Mono", monospace; }
 .cell-top .dot-memo {
-  position: absolute; top: 0; right: 4px;
+  position: absolute; top: 0; right: 2px;
 }
 .cell-rokuyou {
   font-size: 9px; margin-top: 3px; color: var(--ink-soft);
-  padding: 1px 5px; border-radius: 7px; border: 1px solid var(--line);
-  line-height: 1.5; white-space: nowrap;
+  padding: 1px 4px; border-radius: 7px; border: 1px solid var(--line);
+  line-height: 1.5; white-space: nowrap; overflow: hidden;
+  max-width: 100%;
 }
 .cell-rokuyou.taian { color: var(--gold); border-color: var(--gold); }
 .cell-rokuyou.tomobiki { color: var(--green); border-color: var(--green); }
@@ -235,6 +242,7 @@ rt {
 .cell-kanshi {
   font-size: 9px; color: var(--ink-soft); margin-top: 3px;
   font-family: "Shippori Mincho", serif; letter-spacing: 0.02em;
+  white-space: nowrap; overflow: hidden; max-width: 100%;
 }
 .dot { width: 5px; height: 5px; border-radius: 50%; }
 .dot-memo { background: var(--gold); }
