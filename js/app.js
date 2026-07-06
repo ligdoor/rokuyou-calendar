@@ -244,93 +244,57 @@ const App = {
     });
   },
 
-  // ---- シートを下にスワイプして閉じる ----
+  // ---- シートを下にスワイプして閉じる（画面のどこからでもOK）----
   bindSheetGestures() {
     const sheet = document.getElementById("sheet");
-    const dragHandle = document.querySelector(".sheet-handle");
-    const header = document.querySelector(".sheet-head");
-    let startY = 0, currentY = 0, dragging = false;
+    let startY = 0, currentY = 0, dragging = false, ignoring = false;
 
-    const onStart = (y) => {
-      dragging = true;
+    // メモ欄やボタンの上から始まった操作はスワイプ扱いにしない
+    const isInteractive = (el) => !!(el && el.closest && el.closest("textarea, button, input, a"));
+
+    const onStart = (y, target) => {
+      ignoring = isInteractive(target);
+      if (ignoring) return;
       startY = y;
       currentY = y;
+      dragging = false;
       sheet.style.transition = "none";
     };
-    const onMove = (y) => {
-      if (!dragging) return;
+    const onMove = (y, evt) => {
+      if (ignoring) return;
       currentY = y;
-      const delta = Math.max(0, currentY - startY);
-      sheet.style.setProperty("--drag-y", `${delta}px`);
+      const dy = currentY - startY;
+      if (!dragging) {
+        // 下向きに動いていて、かつシートの中身が一番上までスクロールされていたら
+        // ここでスワイプ・ダウンの判定にする（それ以外は中身のスクロールを優先）
+        if (dy > 4 && sheet.scrollTop <= 0) {
+          dragging = true;
+        } else {
+          return;
+        }
+      }
+      if (evt && evt.cancelable) evt.preventDefault();
+      sheet.style.setProperty("--drag-y", `${Math.max(0, dy)}px`);
     };
     const onEnd = () => {
+      if (ignoring) { ignoring = false; return; }
       if (!dragging) return;
       dragging = false;
       sheet.style.transition = "";
-      const delta = currentY - startY;
+      const delta = Math.max(0, currentY - startY);
       sheet.style.removeProperty("--drag-y");
       if (delta > 80) this.closeSheet();
     };
 
-    [dragHandle, header].forEach((el) => {
-      el.addEventListener("touchstart", (e) => onStart(e.touches[0].clientY), { passive: true });
-      el.addEventListener("touchmove", (e) => { e.preventDefault(); onMove(e.touches[0].clientY); }, { passive: false });
-      el.addEventListener("touchend", onEnd);
-      // PCのマウス操作でも確認できるように
-      el.addEventListener("mousedown", (e) => onStart(e.clientY));
-    });
-    window.addEventListener("mousemove", (e) => { if (dragging) onMove(e.clientY); });
+    sheet.addEventListener("touchstart", (e) => onStart(e.touches[0].clientY, e.target), { passive: true });
+    sheet.addEventListener("touchmove", (e) => onMove(e.touches[0].clientY, e), { passive: false });
+    sheet.addEventListener("touchend", onEnd);
+    sheet.addEventListener("touchcancel", onEnd);
+
+    // PCのマウス操作でも確認できるように
+    sheet.addEventListener("mousedown", (e) => onStart(e.clientY, e.target));
+    window.addEventListener("mousemove", (e) => onMove(e.clientY, null));
     window.addEventListener("mouseup", onEnd);
-    this.bindSheetSwipe();
-  },
-
-  // ---- シートを下にスワイプして閉じる ----
-  bindSheetSwipe() {
-    const sheet = document.getElementById("sheet");
-    const overlay = document.getElementById("sheetOverlay");
-    const dragZones = [sheet.querySelector(".sheet-handle"), sheet.querySelector(".sheet-head")];
-    let startY = 0, dragY = 0, dragging = false;
-
-    const onStart = (e) => {
-      dragging = true;
-      startY = e.touches ? e.touches[0].clientY : e.clientY;
-      sheet.style.transition = "none";
-    };
-    const onMove = (e) => {
-      if (!dragging) return;
-      const y = e.touches ? e.touches[0].clientY : e.clientY;
-      dragY = Math.max(0, y - startY);
-      sheet.style.transform = `translateY(${dragY}px)`;
-    };
-    const onEnd = () => {
-      if (!dragging) return;
-      dragging = false;
-      sheet.style.transition = "transform 0.25s cubic-bezier(0.2,0.8,0.2,1)";
-      if (dragY > 90) {
-        // しきい値を超えたら閉じる
-        const h = sheet.offsetHeight;
-        sheet.style.transform = `translateY(${h}px)`;
-        overlay.classList.remove("open");
-        setTimeout(() => {
-          sheet.classList.remove("open");
-          sheet.style.transition = "";
-          sheet.style.transform = "";
-          this.renderCalendar();
-        }, 250);
-      } else {
-        // 閉じるほどではなければ元の位置に戻す
-        sheet.style.transform = "translateY(0)";
-        setTimeout(() => { sheet.style.transition = ""; sheet.style.transform = ""; }, 250);
-      }
-      dragY = 0;
-    };
-
-    dragZones.forEach((zone) => {
-      zone.addEventListener("touchstart", onStart, { passive: true });
-      zone.addEventListener("touchmove", onMove, { passive: true });
-      zone.addEventListener("touchend", onEnd);
-      zone.addEventListener("touchcancel", onEnd);
-    });
   },
 
   // ---- 今日タブ ----
