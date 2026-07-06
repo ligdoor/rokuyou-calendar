@@ -204,13 +204,12 @@ rt {
 .weekday.sat { color: var(--indigo); }
 
 .cell {
-  aspect-ratio: 1 / 1.15;
+  aspect-ratio: 1 / 1.28;
   min-width: 0;
-  overflow: hidden;
   border-radius: 12px;
   background: var(--surface);
   border: 1px solid var(--line);
-  padding: 4px 2px 5px;
+  padding: 4px 2px 6px;
   display: flex; flex-direction: column; align-items: center;
   position: relative;
 }
@@ -225,14 +224,14 @@ rt {
   display: flex; align-items: flex-start; justify-content: center;
   position: relative;
 }
-.cell-num { font-size: 13px; font-weight: 600; font-family: "JetBrains Mono", monospace; }
+.cell-num { font-size: 13px; font-weight: 600; font-family: "JetBrains Mono", monospace; line-height: 1.3; }
 .cell-top .dot-memo {
   position: absolute; top: 0; right: 2px;
 }
 .cell-rokuyou {
-  font-size: 9px; margin-top: 3px; color: var(--ink-soft);
-  padding: 1px 4px; border-radius: 7px; border: 1px solid var(--line);
-  line-height: 1.5; white-space: nowrap; overflow: hidden;
+  font-size: 9px; line-height: 1.6; margin-top: 4px; color: var(--ink-soft);
+  padding: 2px 4px; border-radius: 7px; border: 1px solid var(--line);
+  white-space: nowrap;
   max-width: 100%;
 }
 .cell-rokuyou.taian { color: var(--gold); border-color: var(--gold); }
@@ -240,9 +239,9 @@ rt {
 .cell-rokuyou.butsumetsu { color: var(--ink-soft); }
 .cell-rokuyou.sensho, .cell-rokuyou.senbu { color: var(--indigo); border-color: var(--indigo); }
 .cell-kanshi {
-  font-size: 9px; color: var(--ink-soft); margin-top: 3px;
+  font-size: 9.5px; line-height: 1.6; color: var(--ink-soft); margin-top: 4px;
   font-family: "Shippori Mincho", serif; letter-spacing: 0.02em;
-  white-space: nowrap; overflow: hidden; max-width: 100%;
+  white-space: nowrap; max-width: 100%;
 }
 .dot { width: 5px; height: 5px; border-radius: 50%; }
 .dot-memo { background: var(--gold); }
