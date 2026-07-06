@@ -334,8 +334,8 @@ input[type="time"] {
   box-shadow: 0 -10px 30px rgba(0,0,0,0.25);
 }
 .sheet.open { transform: translateY(0); }
-.sheet-handle { width: 40px; height: 4px; background: var(--line); border-radius: 4px; margin: 0 auto 14px; }
-.sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.sheet-handle { width: 40px; height: 4px; background: var(--line); border-radius: 4px; margin: 0 auto 14px; touch-action: none; cursor: grab; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; touch-action: none; }
 #sheetTitle { font-family: "Shippori Mincho", serif; font-size: 17px; font-weight: 700; }
 #closeSheet { background: none; border: none; font-size: 20px; color: var(--ink-soft); }
 

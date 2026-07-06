@@ -174,6 +174,96 @@ const App = {
     document.getElementById("sheetOverlay").addEventListener("click", () => this.closeSheet());
     document.getElementById("saveMemoBtn").addEventListener("click", () => this.saveMemo());
     document.getElementById("icsBtn").addEventListener("click", () => this.exportDayICS());
+    this.bindSheetGestures();
+  },
+
+  // ---- シートを下にスワイプして閉じる ----
+  bindSheetGestures() {
+    const sheet = document.getElementById("sheet");
+    const dragHandle = document.querySelector(".sheet-handle");
+    const header = document.querySelector(".sheet-head");
+    let startY = 0, currentY = 0, dragging = false;
+
+    const onStart = (y) => {
+      dragging = true;
+      startY = y;
+      currentY = y;
+      sheet.style.transition = "none";
+    };
+    const onMove = (y) => {
+      if (!dragging) return;
+      currentY = y;
+      const delta = Math.max(0, currentY - startY);
+      sheet.style.transform = `translateY(${delta}px)`;
+    };
+    const onEnd = () => {
+      if (!dragging) return;
+      dragging = false;
+      sheet.style.transition = "";
+      const delta = currentY - startY;
+      sheet.style.transform = "";
+      if (delta > 80) this.closeSheet();
+    };
+
+    [dragHandle, header].forEach((el) => {
+      el.addEventListener("touchstart", (e) => onStart(e.touches[0].clientY), { passive: true });
+      el.addEventListener("touchmove", (e) => onMove(e.touches[0].clientY), { passive: true });
+      el.addEventListener("touchend", onEnd);
+      // PCのマウス操作でも確認できるように
+      el.addEventListener("mousedown", (e) => onStart(e.clientY));
+    });
+    window.addEventListener("mousemove", (e) => { if (dragging) onMove(e.clientY); });
+    window.addEventListener("mouseup", onEnd);
+    this.bindSheetSwipe();
+  },
+
+  // ---- シートを下にスワイプして閉じる ----
+  bindSheetSwipe() {
+    const sheet = document.getElementById("sheet");
+    const overlay = document.getElementById("sheetOverlay");
+    const dragZones = [sheet.querySelector(".sheet-handle"), sheet.querySelector(".sheet-head")];
+    let startY = 0, dragY = 0, dragging = false;
+
+    const onStart = (e) => {
+      dragging = true;
+      startY = e.touches ? e.touches[0].clientY : e.clientY;
+      sheet.style.transition = "none";
+    };
+    const onMove = (e) => {
+      if (!dragging) return;
+      const y = e.touches ? e.touches[0].clientY : e.clientY;
+      dragY = Math.max(0, y - startY);
+      sheet.style.transform = `translateY(${dragY}px)`;
+    };
+    const onEnd = () => {
+      if (!dragging) return;
+      dragging = false;
+      sheet.style.transition = "transform 0.25s cubic-bezier(0.2,0.8,0.2,1)";
+      if (dragY > 90) {
+        // しきい値を超えたら閉じる
+        const h = sheet.offsetHeight;
+        sheet.style.transform = `translateY(${h}px)`;
+        overlay.classList.remove("open");
+        setTimeout(() => {
+          sheet.classList.remove("open");
+          sheet.style.transition = "";
+          sheet.style.transform = "";
+          this.renderCalendar();
+        }, 250);
+      } else {
+        // 閉じるほどではなければ元の位置に戻す
+        sheet.style.transform = "translateY(0)";
+        setTimeout(() => { sheet.style.transition = ""; sheet.style.transform = ""; }, 250);
+      }
+      dragY = 0;
+    };
+
+    dragZones.forEach((zone) => {
+      zone.addEventListener("touchstart", onStart, { passive: true });
+      zone.addEventListener("touchmove", onMove, { passive: true });
+      zone.addEventListener("touchend", onEnd);
+      zone.addEventListener("touchcancel", onEnd);
+    });
   },
 
   // ---- 今日タブ ----
