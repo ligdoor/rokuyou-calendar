@@ -4,18 +4,18 @@
  * 更新がすぐ反映されるよう、通信できるときは常に最新のファイルを取りに行き、
  * 電波が無いときだけキャッシュ（保存しておいたもの）を使う方式にしています。
  */
-const CACHE_NAME = "koyomi-cache-v4";
+const CACHE_NAME = "koyomi-cache-v5";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./css/style.css?v=4",
-  "./js/astro.js?v=4",
-  "./js/lunar.js?v=4",
-  "./js/kanshi.js?v=4",
-  "./js/zassetsu.js?v=4",
-  "./js/holidays.js?v=4",
-  "./js/app.js?v=4",
+  "./css/style.css?v=5",
+  "./js/astro.js?v=5",
+  "./js/lunar.js?v=5",
+  "./js/kanshi.js?v=5",
+  "./js/zassetsu.js?v=5",
+  "./js/holidays.js?v=5",
+  "./js/app.js?v=5",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
 ];

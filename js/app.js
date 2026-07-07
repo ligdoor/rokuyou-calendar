@@ -247,7 +247,7 @@ const App = {
   // ---- シートを下にスワイプして閉じる（画面のどこからでもOK）----
   bindSheetGestures() {
     const sheet = document.getElementById("sheet");
-    let startY = 0, currentY = 0, dragging = false, ignoring = false;
+    let startY = 0, currentY = 0, dragging = false, ignoring = false, mouseActive = false;
 
     // メモ欄やボタンの上から始まった操作はスワイプ扱いにしない
     const isInteractive = (el) => !!(el && el.closest && el.closest("textarea, button, input, a"));
@@ -291,10 +291,17 @@ const App = {
     sheet.addEventListener("touchend", onEnd);
     sheet.addEventListener("touchcancel", onEnd);
 
-    // PCのマウス操作でも確認できるように
-    sheet.addEventListener("mousedown", (e) => onStart(e.clientY, e.target));
-    window.addEventListener("mousemove", (e) => onMove(e.clientY, null));
-    window.addEventListener("mouseup", onEnd);
+    // PCのマウス操作でも確認できるように（マウスを実際に押している間だけ反応させる）
+    sheet.addEventListener("mousedown", (e) => {
+      mouseActive = true;
+      onStart(e.clientY, e.target);
+    });
+    window.addEventListener("mousemove", (e) => { if (mouseActive) onMove(e.clientY, null); });
+    window.addEventListener("mouseup", () => {
+      if (!mouseActive) return;
+      mouseActive = false;
+      onEnd();
+    });
   },
 
   // ---- 今日タブ ----
@@ -391,6 +398,7 @@ const App = {
   // ---- 日付詳細シート ----
   openSheet(date) {
     this.state.selectedDate = date;
+    document.getElementById("sheet").style.removeProperty("--drag-y");
     const info = getDayInfo(date);
     const style = ROKUYOU_STYLE[info.rokuyou] || {};
     document.getElementById("sheetTitle").textContent =
